@@ -71,13 +71,12 @@ func main() {
 	}
 	defer response.Body.Close()
 
-	var output io.Writer
+	var output *os.File
 	if filename != "" {
-		output, err := os.Create("test.bin")
+		output, err = os.Create(filename)
 		if err != nil {
 			log.Fatalf("Unable to open output file: %v", err)
 		}
-		defer output.Close()
 	} else {
 		output = os.Stdout
 	}
@@ -87,4 +86,6 @@ func main() {
 		log.Fatalf("Unable to copy object data to file: %v", err)
 	}
 	log.Infof("Copied %d bytes to file", count)
+
+	output.Close()
 }
