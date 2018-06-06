@@ -1,11 +1,7 @@
 package cmd
 
 import (
-	"io"
-	"os"
-
-	log "github.com/dihedron/go-log"
-	"github.com/gophercloud/gophercloud/openstack/objectstorage/v1/objects"
+	"github.com/dihedron/swift/swift"
 	"github.com/spf13/cobra"
 )
 
@@ -26,41 +22,6 @@ filename is provided, the file contents are written to STDOUT.`,
 			// add extra validation here
 			return nil
 		},
-		Run: getObject,
+		Run: swift.GetObject,
 	})
-}
-
-func getObject(cmd *cobra.Command, args []string) {
-	container := args[0]
-	object := args[1]
-
-	// if a filename argument is provided, write to file, otherwise it's STDOUT
-	var output *os.File
-	if len(args) > 2 {
-		if args[2] != "" {
-			log.Debugf("Writing object to output file: %q", args[2])
-			var err error
-			output, err = os.Create(args[2])
-			if err != nil {
-				log.Fatalf("Unable to open output file: %v", err)
-			}
-		} else {
-			output = os.Stdout
-		}
-	}
-
-	// download one of the objects that was created above
-	response := objects.Download(storage, container, object, nil)
-	if response.Err != nil {
-		log.Fatalf("Unable to read object data: %v", response.Err)
-	}
-	defer response.Body.Close()
-
-	count, err := io.Copy(output, response.Body)
-	if err != nil {
-		log.Fatalf("Unable to copy object data to file: %v", err)
-	}
-	log.Infof("Copied %d bytes to file", count)
-
-	output.Close()
 }

@@ -5,8 +5,7 @@ import (
 	"os"
 
 	log "github.com/dihedron/go-log"
-	"github.com/gophercloud/gophercloud"
-	"github.com/gophercloud/gophercloud/openstack"
+	"github.com/dihedron/swift/swift"
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -22,8 +21,8 @@ var rootCmd = &cobra.Command{
 ability to list all objects in a container, optionally filter the list, put a new 
 file into an existing container, retrieve a file from a container, and delete it.`,
 	Example:           "swift [command] [args...]",
-	PersistentPreRun:  login,
-	PersistentPostRun: logout,
+	PersistentPreRun:  swift.Login,
+	PersistentPostRun: swift.Logout,
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -66,43 +65,5 @@ func initConfig() {
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {
 		// fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
-}
-
-var storage *gophercloud.ServiceClient
-
-func login(cmd *cobra.Command, args []string) {
-	// obtain credentials from the environment
-	opts, err := openstack.AuthOptionsFromEnv()
-	if err != nil {
-		log.Fatalf("Unable to acquire credentials: %v", err)
-	}
-
-	// authenticate against keystone (v2 or v3)
-	client, err := openstack.AuthenticatedClient(opts)
-	if err != nil {
-		log.Fatalf("Unable to authenticate: %v", err)
-	}
-	if client.TokenID == "" {
-		log.Fatalf("No token ID assigned to the client")
-	}
-
-	log.Infof("Client successfully acquired a token: %v", client.TokenID)
-
-	// find the storage service in the service catalog
-	storage, err = openstack.NewObjectStorageV1(client, gophercloud.EndpointOpts{
-		Region: os.Getenv("OS_REGION_NAME"),
-	})
-	if err != nil {
-		log.Fatalf("Unable to locate a storage service: %v", err)
-	}
-
-	log.Infof("Located a storage service at endpoint: [%s]", storage.Endpoint)
-}
-
-func logout(cmd *cobra.Command, args []string) {
-	log.Infof("Logging out of storage service")
-	if storage != nil {
-		storage = nil
 	}
 }
