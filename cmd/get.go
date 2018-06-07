@@ -7,21 +7,14 @@ import (
 
 func init() {
 	rootCmd.AddCommand(&cobra.Command{
-		Use:   "get container object [filename]",
-		Short: "Retrieve an object from a container",
+		Use:   "get bucket object [filename]",
+		Short: "Retrieve an object from a bucket",
 		Long: `
-Retrieves a file from a container, optonally storing it as [filename]; if no
-filename is provided, the file contents are written to STDOUT.`,
-		Example: "  swift get my-container my-object filename.bin",
+Retrieves a file from a bucket, writing it to STDOUT or, if [filename] is provided,
+writing it to a local file by the same name.`,
+		Example: "  swift get my-bucket my-object filename.out",
 		Aliases: []string{"retrieve", "download"},
-		Args: func(cmd *cobra.Command, args []string) error {
-			err := (cobra.RangeArgs(2, 3))(cmd, args)
-			if err != nil {
-				return err
-			}
-			// add extra validation here
-			return nil
-		},
-		Run: swift.GetObject,
+		Args:    cobra.RangeArgs(2, 3),
+		Run:     swift.GetObject,
 	})
 }

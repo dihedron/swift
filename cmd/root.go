@@ -17,9 +17,11 @@ var cfgFile string
 var rootCmd = &cobra.Command{
 	Use:   "swift",
 	Short: "A minimalistic OpenStack Swift v1 client",
-	Long: `This program provides a minimalistic OpenStack Swift v1 client with the 
-ability to list all objects in a container, optionally filter the list, put a new 
-file into an existing container, retrieve a file from a container, and delete it.`,
+	Long: `
+This program provides a minimalistic OpenStack Swift v1 client with the ability
+to list all objects in a bucket, optionally filter the list, put a new file into 
+an existing bucket (upload), retrieve a file from a bucket (download), and delete 
+it.`,
 	Example:           "swift [command] [args...]",
 	PersistentPreRun:  swift.Login,
 	PersistentPostRun: swift.Logout,
