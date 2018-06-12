@@ -36,10 +36,6 @@ func Execute() {
 }
 
 func init() {
-
-	log.SetStream(os.Stderr, true)
-	log.SetLevel(log.INF)
-
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "configuration file (default is $HOME/.swift.yaml)")
 }

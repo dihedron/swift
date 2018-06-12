@@ -1,6 +1,19 @@
 package main
 
-import "github.com/dihedron/swift/cmd"
+import (
+	"os"
+
+	log "github.com/dihedron/go-log"
+	"github.com/dihedron/swift/cmd"
+)
+
+func init() {
+	log.SetLevel(log.DBG)
+	log.SetStream(os.Stdout, true)
+	log.SetTimeFormat("15:04:05.000")
+	log.SetPrintCallerInfo(true)
+	log.SetPrintSourceInfo(log.SourceInfoShort)
+}
 
 func main() {
 	cmd.Execute()

@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var client *gophercloud.ProviderClient
 var storage *gophercloud.ServiceClient
 
 // Login performs a login to OpenStack Keystone using parameters in the current
@@ -27,7 +28,7 @@ func Login(cmd *cobra.Command, args []string) {
 	}
 
 	// authenticate against keystone (v2 or v3)
-	client, err := openstack.AuthenticatedClient(opts)
+	client, err = openstack.AuthenticatedClient(opts)
 	if err != nil {
 		log.Fatalf("Unable to authenticate: %v", err)
 	}
@@ -62,6 +63,8 @@ func GetObject(cmd *cobra.Command, args []string) {
 	bucket := args[0]
 	object := args[1]
 
+	log.Debugf("Downloading %q from %q", object, bucket)
+
 	// if a filename argument is provided, write to file, otherwise it's STDOUT
 	var output *os.File
 	if len(args) > 2 {
@@ -77,12 +80,14 @@ func GetObject(cmd *cobra.Command, args []string) {
 		}
 	}
 
-	// download one of the objects that was created above
+	// download the object from the remote storage
 	response := objects.Download(storage, bucket, object, nil)
 	if response.Err != nil {
 		log.Fatalf("Unable to read object data: %v", response.Err)
 	}
 	defer response.Body.Close()
+
+	log.Debugf("Received response")
 
 	count, err := io.Copy(output, response.Body)
 	if err != nil {
