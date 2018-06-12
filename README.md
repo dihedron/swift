@@ -5,11 +5,11 @@ Tis project provides a minimalistic implementation of an openStack Swift (Object
 ## Purpose
 
 The purpose of this client is to provide a self-contained, easily deployable OpenStack Swift CLI with no dependencies (no Python, non PIP) for use in VM and Docker container deployments, where there is the need to download from or upload to an Object Storage while keeping the footprint to a minimum. 
-For better functionality-to-file-size ratio, use UPX compressor after building the CLI: the executable may shrink from something less than 12 MB.
+For better functionality-to-file-size ratio, use UPX compressor after building the CLI: the executable may shrink from 12 MB to 2.8 MB while retaining symbols to support stack traces in case of panic.
 
 ## How to use
 
-Simply run the cmmand with no arguments to get a help screen.
+Simply run the command with no arguments to get a help screen.
 
 ```bash
 $ swift
@@ -38,7 +38,16 @@ Flags:
   -h, --help            help for swift
 
 Use "swift [command] --help" for more information about a command.
+```
 
+The ```swift``` command behaves like a shell filter, so it can read from an input pipe or pipe its output into another command.
+
+Most commands have aliases so it's easier to run it without having to remember the exact syntax; e.g. the following commands are equivalent:
+
+```bash
+$ swift remove my-container my-object
+$ swift delete my-container my-object
+$ swift drop my-container my-object
 ```
 
 ### The ```list``` command
@@ -84,4 +93,24 @@ To specify the name of the input file directly on the CLI, use:
 ```bash
 $ swift put my-bucket my-object myfile.out
 ```
+
+### The ```about``` command
+
+To print metadata associated with an existing object, type as follows:
+
+```bash
+$ swift about my-container my-object
+```
+
+### The ```remove``` command
+
+To delete an object from a bucket, run the following command:
+
+```bash
+$ swift remove my-bucket my-object
+```
+
+## Feeback and contributions
+
+... are very welcome, please contribute your code and ideas as issues and pull requests! 
 
