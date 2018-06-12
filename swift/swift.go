@@ -69,17 +69,15 @@ func GetObject(cmd *cobra.Command, args []string) {
 
 	// if a filename argument is provided, write to file, otherwise it's STDOUT
 	var output *os.File
-	if len(args) > 2 {
-		if args[2] != "" {
-			log.Debugf("Writing object to output file: %q", args[2])
-			var err error
-			output, err = os.Create(args[2])
-			if err != nil {
-				log.Fatalf("Unable to open output file: %v", err)
-			}
-		} else {
-			output = os.Stdout
+	if len(args) > 2 && args[2] != "" {
+		log.Debugf("Writing object to output file: %q", args[2])
+		var err error
+		output, err = os.Create(args[2])
+		if err != nil {
+			log.Fatalf("Unable to open output file: %v", err)
 		}
+	} else {
+		output = os.Stdout
 	}
 
 	// download the object from the remote storage
@@ -108,17 +106,16 @@ func PutObject(cmd *cobra.Command, args []string) {
 
 	// if a filename argument is provided, read from file, otherwise it's STDIN
 	var input *os.File
-	if len(args) > 2 {
-		if args[2] != "" {
-			log.Debugf("Reading object from input file: %q", args[2])
-			var err error
-			input, err = os.Open(args[2])
-			if err != nil {
-				log.Fatalf("Unable to open input file: %v", err)
-			}
-		} else {
-			input = os.Stdin
+	if len(args) > 2 && args[2] != "" {
+		log.Debugf("Reading object from input file: %q", args[2])
+		var err error
+		input, err = os.Open(args[2])
+		if err != nil {
+			log.Fatalf("Unable to open input file: %v", err)
 		}
+		defer input.Close()
+	} else {
+		input = os.Stdin
 	}
 
 	// upload one of the objects that was created above
@@ -133,7 +130,6 @@ func PutObject(cmd *cobra.Command, args []string) {
 
 	log.Debugf("Uploaded file to store")
 
-	input.Close()
 }
 
 // DeleteObject removes an object from the object store given its name.

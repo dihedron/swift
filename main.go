@@ -8,7 +8,7 @@ import (
 )
 
 func init() {
-	log.SetLevel(log.DBG)
+	log.SetLevel(log.NUL)
 	log.SetStream(os.Stdout, true)
 	log.SetTimeFormat("15:04:05.000")
 	log.SetPrintCallerInfo(true)
