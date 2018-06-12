@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"regexp"
+	"sort"
 	"strings"
 
 	log "github.com/dihedron/go-log"
@@ -164,10 +166,29 @@ func ListObjects(cmd *cobra.Command, args []string) {
 		log.Fatalf("Unable to get list of objects: %v", pager.Err)
 	}
 
+	list := []string{}
+
 	pager.EachPage(func(page pagination.Page) (bool, error) {
-		fmt.Printf("object: \"%v\"\n", page.GetBody())
+		names, err := objects.ExtractNames(page)
+		if err != nil {
+			log.Fatalf("Unable to extract names: %v", err)
+		}
+		list = append(list, names...)
 		return true, nil
 	})
+
+	sort.Strings(list)
+
+	var re *regexp.Regexp
+	if len(args) > 1 && len(args[1]) > 0 {
+		log.Debugf("Filtering with %q", args[1])
+		re = regexp.MustCompile(args[1])
+	}
+	for _, item := range list {
+		if re == nil || re.MatchString(item) {
+			fmt.Printf("%s\n", item)
+		}
+	}
 
 	log.Debugf("Retrieved list of objects in bucket")
 }
