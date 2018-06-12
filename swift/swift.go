@@ -143,7 +143,7 @@ func DeleteObject(cmd *cobra.Command, args []string) {
 	log.Debugf("Removed object from store")
 }
 
-// AboutObject retrives metadata about an object.
+// AboutObject retrieves metadata about an object.
 func AboutObject(cmd *cobra.Command, args []string) {
 	bucket := args[0]
 	object := args[1]
