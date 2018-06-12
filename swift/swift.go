@@ -76,6 +76,7 @@ func GetObject(cmd *cobra.Command, args []string) {
 		if err != nil {
 			log.Fatalf("Unable to open output file: %v", err)
 		}
+		defer output.Close()
 	} else {
 		output = os.Stdout
 	}
@@ -94,8 +95,6 @@ func GetObject(cmd *cobra.Command, args []string) {
 		log.Fatalf("Unable to copy object data to file: %v", err)
 	}
 	log.Debugf("Copied %d bytes to file", count)
-
-	output.Close()
 }
 
 // PutObject stores an object in the object store under the given name; the file
@@ -129,7 +128,6 @@ func PutObject(cmd *cobra.Command, args []string) {
 	}
 
 	log.Debugf("Uploaded file to store")
-
 }
 
 // DeleteObject removes an object from the object store given its name.
@@ -143,6 +141,28 @@ func DeleteObject(cmd *cobra.Command, args []string) {
 	}
 
 	log.Debugf("Removed object from store")
+}
+
+// AboutObject retrives metadata about an object.
+func AboutObject(cmd *cobra.Command, args []string) {
+	bucket := args[0]
+	object := args[1]
+
+	log.Debugf("Getting info about %q from %q", object, bucket)
+
+	// retrieve the object metadata from the remote storage
+	response := objects.Get(storage, bucket, object, nil)
+	if response.Err != nil {
+		log.Fatalf("Unable to read object metadadata: %v", response.Err)
+	}
+	metadata, err := response.ExtractMetadata()
+	if err != nil {
+		log.Fatalf("Unable to read object metadata: %v", err)
+	}
+
+	for k, v := range metadata {
+		fmt.Printf("%q: %q\n", k, v)
+	}
 }
 
 // ListObjects retrieves the list of objects in a bucket; if a filter is provided,
