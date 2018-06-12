@@ -58,13 +58,13 @@ To get a lexicographically sorted list of objects in an existing bucket (aka con
 $ swift list my-bucket
 ```
 
-The ```list``` command accepts an optional additional parameter specifying a regular expression that will be applied to all oject names to filter thos of interest; for instance, running the following:
+The ```list``` command accepts an optional additional parameter specifying a regular expression that will be applied to all object names to retain only those of interest; for instance, running the following:
 
 ```bash
 $ swift list my-bucket "^exam.*\.gz$"
 ```
 
-will return all obejcts beginning with ```exam``` and ending with the ```.gz``` extension, e.g. ```example.tar.gz```. Names that do not match the regular expression are omitted.
+will return all objects whose names begin with ```exam``` and end with the ```.gz``` extension, e.g. ```example.tar.gz```. Names that do not match the regular expression are omitted.
 
 ### The ```get``` command
 
