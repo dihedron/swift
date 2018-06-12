@@ -1,6 +1,6 @@
 # A minimalistic OpenStack Object Storage (aka Swift) Client
 
-Tis project provides a minimalistic implementation of an openStack Swift (Object Storage v1) API client; it provides a very small subset of the official OpenStack CLI functionalities, and only those pertaining to ```objects```. 
+This project provides a minimalistic implementation of an openStack Swift (Object Storage v1) API client; it provides a very small subset of the official OpenStack CLI functionalities, and only those pertaining to ```objects```. 
 
 ## Purpose
 
